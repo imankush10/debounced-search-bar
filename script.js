@@ -24,31 +24,29 @@ async function dataFetch(url) {
 
 dataFetch("https://jsonplaceholder.typicode.com/users");
 
-const debouncedFunctionCaller = debouncingFunction((value) => {
+let timeout;
+function debouncedFunctionCaller(value) {
+  clearTimeout(timeout);
+  timeout = setTimeout(() => {
+    searchingFunction(value);
+  },1000);
+}
+
+function searchingFunction(value){
+  console.log("Searches now");
   users.forEach((user) => {
     const card = document.querySelector(
       `.header[data-header="${user.name}"`
     ).parentNode;
 
     const isVisible =
-    user.name.toLowerCase().includes(value) ||
-    user.email.toLowerCase().includes(value);
+      user.name.toLowerCase().includes(value) ||
+      user.email.toLowerCase().includes(value);
 
     card.classList.toggle("hidden", !isVisible);
-});
-}, 300);
-
-
-function debouncingFunction(callback, delay=500){
-    let timeout;
-    return function (value){
-        clearTimeout(timeout);
-        timeout = setTimeout(()=>{
-            console.log("Searches now");
-            callback(value)
-        }, delay)
-    }
+  });
 }
+
 searchInput.addEventListener("input", (e) => {
   const value = e.target.value.toLowerCase();
   debouncedFunctionCaller(value);
